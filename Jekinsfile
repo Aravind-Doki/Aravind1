@@ -1,0 +1,28 @@
+pipeline {
+
+    agent {
+     label {
+           label "Java"}
+           } 
+    stages {      
+    stage('GIT_CHECKOUT') { 
+                          steps {      
+                                checkout scm: [$class: 'GitSCM', userRemoteConfigs: [[url: 'https://github.com/Aravind-Doki/Aravind1.git']], branches: [[name: "main"]]], poll: false
+                                }
+                          }
+    stage('Build') {
+        tools {
+           maven "maven"
+          }
+                   steps {
+                         sh "mvn  clean install package"
+                         }
+                   }
+    stage('Deploy to tomcat') {
+                              steps {
+                                    sh 'bash /home/jenkins-slave-01/build_deploy.sh'
+                                    }
+                       }
+           }
+}
+
